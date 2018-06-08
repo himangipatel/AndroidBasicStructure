@@ -6,24 +6,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.androidbasicstructure.BottomDialog;
 import com.androidbasicstructure.R;
 import com.androidbasicstructure.annotations.Layout;
 import com.androidbasicstructure.connection.constant.ApiParamConstant;
+import com.androidbasicstructure.databinding.AppLoadingDialogBinding;
+import com.androidbasicstructure.databinding.AppToolbarBinding;
+import com.androidbasicstructure.databinding.DialogPhotoSelectorBinding;
 import com.androidbasicstructure.utils.AppUtils;
 import com.imagepicker.FilePickUtils;
 import com.imagepicker.LifeCycleCallBackManager;
@@ -31,34 +33,18 @@ import com.imagepicker.LifeCycleCallBackManager;
 import java.util.HashMap;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Optional;
-
 import static com.imagepicker.FilePickUtils.CAMERA_PERMISSION;
 import static com.imagepicker.FilePickUtils.STORAGE_PERMISSION_IMAGE;
 
 /**
  * Created by Himangi on 7/6/18
  */
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
-    @Nullable
-    @BindView(R.id.toolbar)
     public Toolbar toolbar;
-    @Nullable
-    @BindView(R.id.ivToolbarLeft)
-    public ImageView ivToolbarLeft;
-    @Nullable
-    @BindView(R.id.tvToolbarLeft)
-    public TextView tvToolbarLeft;
-    @Nullable
-    @BindView(R.id.tvToolbarRight)
-    public TextView tvToolbarRight;
-    @Nullable
-    @BindView(R.id.tvToolbarTitle)
-    public TextView tvToolbarTitle;
+
+    private AppToolbarBinding toolbarBinding;
+    private ViewDataBinding viewDataBinding;
     private Dialog progressDialog;
     private FilePickUtils filePickUtils;
 
@@ -68,18 +54,51 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setSupportActionBar(toolbar);
         if (getLayout() != null) {
-            setContentView(getLayout().value());
-            ButterKnife.bind(this);
+            viewDataBinding = DataBindingUtil.setContentView(this, getLayout().value());
+            getToolbar();
+            clickableViews(viewDataBinding.getRoot());
         }
+        setSupportActionBar(toolbar);
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
-
     }
+
+    protected ViewDataBinding getBinding() {
+        return viewDataBinding;
+    }
+
+    private void getToolbar() {
+        toolbar = findViewById(R.id.toolbar);
+        toolbarBinding = DataBindingUtil.getBinding(toolbar);
+        toolbarBinding.ivToolbarLeft.setOnClickListener(this);
+        toolbarBinding.tvToolbarLeft.setOnClickListener(this);
+    }
+
 
     public Layout getLayout() {
         return getClass().getAnnotation(Layout.class);
     }
+
+    protected void clickableViews(View views) {
+        if (views instanceof ViewGroup) {
+            ViewGroup viewGroup = ((ViewGroup) views);
+            for (int index = 0; index < viewGroup.getChildCount(); ++index) {
+                View child = viewGroup.getChildAt(index);
+                child.setOnClickListener(this);
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ivToolbarLeft:
+            case R.id.tvToolbarLeft:
+                onBackPressed();
+                break;
+        }
+    }
+
 
     public void showProgressDialog(boolean show) {
         if (show) {
@@ -96,16 +115,16 @@ public class BaseActivity extends AppCompatActivity {
         } else {
             return;
         }
-        View view = LayoutInflater.from(this).inflate(R.layout.app_loading_dialog,
-                null, false);
 
-        ImageView imageView1 = view.findViewById(R.id.imageView2);
+        AppLoadingDialogBinding binding = DataBindingUtil.inflate(getActivity().getLayoutInflater(),
+                R.layout.app_loading_dialog, null, false);
+
         Animation a1 = AnimationUtils.loadAnimation(this, R.anim.progress_anim);
         a1.setDuration(1500);
-        imageView1.startAnimation(a1);
+        binding.imageView1.startAnimation(a1);
 
         progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        progressDialog.setContentView(view);
+        progressDialog.setContentView(binding.getRoot());
         Window window = progressDialog.getWindow();
         if (window != null) {
             window.setBackgroundDrawable(ContextCompat.getDrawable(this, android.R.color.transparent));
@@ -128,39 +147,25 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void setToolBariVLeft(int visibility) {
-        assert ivToolbarLeft != null;
-        ivToolbarLeft.setVisibility(visibility);
+        toolbarBinding.ivToolbarLeft.setVisibility(visibility);
     }
 
     protected void setTootBartVLeft(String title) {
-        assert tvToolbarLeft != null;
-        tvToolbarLeft.setVisibility(View.VISIBLE);
-        tvToolbarLeft.setText(title);
+        toolbarBinding.tvToolbarLeft.setVisibility(View.VISIBLE);
+        toolbarBinding.tvToolbarLeft.setText(title);
     }
 
     protected void setTootBartVRight(String title) {
-        assert tvToolbarRight != null;
-        tvToolbarRight.setVisibility(View.VISIBLE);
-        tvToolbarRight.setText(title);
+        toolbarBinding.tvToolbarRight.setVisibility(View.VISIBLE);
+        toolbarBinding.tvToolbarRight.setText(title);
     }
 
 
     protected void setTootBartVTitle(String title) {
-        assert tvToolbarTitle != null;
-        tvToolbarTitle.setVisibility(View.VISIBLE);
-        tvToolbarTitle.setText(title);
+        toolbarBinding.tvToolbarTitle.setVisibility(View.VISIBLE);
+        toolbarBinding.tvToolbarTitle.setText(title);
     }
 
-    @Optional
-    @OnClick({R.id.ivToolbarLeft, R.id.tvToolbarLeft})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.ivToolbarLeft:
-            case R.id.tvToolbarLeft:
-                onBackPressed();
-                break;
-        }
-    }
 
     public HashMap<String, String> getDefaultParameter() {
         HashMap<String, String> params = new HashMap<>();
@@ -188,13 +193,13 @@ public class BaseActivity extends AppCompatActivity {
     public void showImagePickerDialog(FilePickUtils.OnFileChoose onFileChoose) {
         filePickUtils = new FilePickUtils(this, onFileChoose);
         lifeCycleCallBackManager = filePickUtils.getCallBackManager();
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.dialog_photo_selector, null);
+        DialogPhotoSelectorBinding binding = DataBindingUtil.inflate(getActivity().getLayoutInflater(),
+                R.layout.dialog_photo_selector, null, false);
         bottomSheetDialog = new BottomDialog(BaseActivity.this);
-        bottomSheetDialog.setContentView(bottomSheetView);
-        final TextView tvCamera = bottomSheetView.findViewById(R.id.tvCamera);
-        final TextView tvGallery = bottomSheetView.findViewById(R.id.tvGallery);
-        tvCamera.setOnClickListener(onCameraListener);
-        tvGallery.setOnClickListener(onGalleryListener);
+        bottomSheetDialog.setContentView(binding.getRoot());
+
+        binding.tvCamera.setOnClickListener(onCameraListener);
+        binding.tvGallery.setOnClickListener(onGalleryListener);
         bottomSheetDialog.show();
     }
 
@@ -248,4 +253,5 @@ public class BaseActivity extends AppCompatActivity {
             lifeCycleCallBackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
+
 }

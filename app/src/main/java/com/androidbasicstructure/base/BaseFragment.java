@@ -3,6 +3,8 @@ package com.androidbasicstructure.base;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,13 +20,14 @@ import com.imagepicker.FilePickUtils;
 
 import java.util.HashMap;
 
-import butterknife.ButterKnife;
 
 /**
  * Created by Himangi on 7/6/18
  */
 public class BaseFragment extends Fragment {
+
     private Dialog progressDialog;
+    private ViewDataBinding viewDataBinding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,8 +39,9 @@ public class BaseFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = null;
         if (getLayout() != null) {
-            view = inflater.inflate(getLayout().value(), container, false);
-            ButterKnife.bind(this, view);
+            viewDataBinding = DataBindingUtil.inflate(
+                    inflater, getLayout().value(), container, false);
+            ((BaseActivity) getActivity()).clickableViews(viewDataBinding.getRoot());
         }
         getActivity().overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
         return view;

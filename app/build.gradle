@@ -16,6 +16,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -28,11 +31,6 @@ dependencies {
 
     implementation "com.android.support:cardview-v7:$SUPPORT_LIBRARY"
     implementation "com.android.support:design:$SUPPORT_LIBRARY"
-
-    //Buterknife
-
-    annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTERKNIFE_VERSION"
-    implementation "com.jakewharton:butterknife:$BUTTERKNIFE_VERSION"
 
     /*SDP Dependency*/
     implementation "com.intuit.sdp:sdp-android:$SDP_VERSION"

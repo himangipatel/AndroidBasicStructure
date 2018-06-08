@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="com.androidbasicstructure.UserModel"/>
+        <variable
+            name="user"
+            type="com.androidbasicstructure.UserModel"/>
+    </data>
+    <TextView
+        android:id="@+id/tvLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@drawable/rectable_primary_button"
+        android:fontFamily="@font/delicious_adventures"
+        android:gravity="center"
+        android:padding="@dimen/_10sdp"
+        android:text="@{user.name}"
+        android:textColor="@android:color/white" />
+
+
+</layout>
