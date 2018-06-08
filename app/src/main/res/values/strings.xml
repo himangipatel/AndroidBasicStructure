@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">AndroidBasicStructure</string>
+
+    <string name="no_internet">Internet connection is not available!</string>
+    <string name="please_try_again">Please Try Again!!!</string>
+
+
+    <string name="enter_email">Please enter email address</string>
+    <string name="enter_phone">Please enter phone number</string>
+    <string name="enter_password">Please enter password</string>
+
+    <string name="invalid_email">Please enter valid email</string>
+    <string name="invalid_password">Please enter valid password, password should be at least 6 characters long with 1 character and 1 number.</string>
+    <string name="invalid_phone">Please enter phone number between 10&#8211;15 digits.</string>
+
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="login">Login</string>
+
+</resources>

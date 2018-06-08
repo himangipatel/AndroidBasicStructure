@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (c) 2016 - All Rights Reserved
+  ~ Unauthorized copying of this file, via any medium is strictly prohibited
+  ~ Proprietary and confidential by BNBJobs
+  -->
+
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <scale android:fromXScale="80%p"
+        android:toXScale="100%p"
+        android:fromYScale="80%p"
+        android:toYScale="100%p"
+        android:pivotX="50%p"
+        android:pivotY="50%p"
+        android:duration="@android:integer/config_mediumAnimTime" />
+
+    <alpha android:fromAlpha="0.5"
+        android:toAlpha="1.0"
+        android:duration="@android:integer/config_mediumAnimTime"/>
+
+</set>
