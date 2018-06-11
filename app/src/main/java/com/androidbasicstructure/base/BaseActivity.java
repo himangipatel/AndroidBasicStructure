@@ -99,7 +99,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
     public void showProgressDialog(boolean show) {
         if (show) {
             showProgressDialog();
@@ -107,7 +106,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             hideProgressDialog();
         }
     }
-
 
     public void showProgressDialog() {
         if (progressDialog == null) {
