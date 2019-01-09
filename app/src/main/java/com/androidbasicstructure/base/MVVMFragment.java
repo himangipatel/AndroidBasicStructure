@@ -11,16 +11,16 @@ import android.view.ViewGroup;
  * Created by Himangi Patel on 6/12/2017.
  */
 
-public abstract class MVPFragment<P extends BasePresenter<V>, V extends BaseView>
+public abstract class MVVMFragment<P extends BaseViewModel<V>, V extends BaseView>
         extends BaseFragment {
 
-    private P presenter;
+    private P viewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = createPresenter();
-        presenter.attachView(attachView());
+        viewModel = createPresenter();
+        viewModel.attachView(attachView());
     }
 
     public abstract
@@ -33,7 +33,7 @@ public abstract class MVPFragment<P extends BasePresenter<V>, V extends BaseView
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -41,11 +41,11 @@ public abstract class MVPFragment<P extends BasePresenter<V>, V extends BaseView
     @Override
     public void onDestroy() {
         super.onDestroy();
-        presenter.detachView();
+        viewModel.detachView();
     }
 
-    public P getPresenter() {
-        return presenter;
+    public P getViewModel() {
+        return viewModel;
     }
 
 //    public boolean hasInternet() {

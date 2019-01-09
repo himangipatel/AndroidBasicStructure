@@ -14,7 +14,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -23,8 +22,8 @@ import com.androidbasicstructure.BottomDialog;
 import com.androidbasicstructure.R;
 import com.androidbasicstructure.annotations.Layout;
 import com.androidbasicstructure.connection.constant.ApiParamConstant;
+import com.androidbasicstructure.databinding.ActivityBaseBinding;
 import com.androidbasicstructure.databinding.AppLoadingDialogBinding;
-import com.androidbasicstructure.databinding.AppToolbarBinding;
 import com.androidbasicstructure.databinding.DialogPhotoSelectorBinding;
 import com.androidbasicstructure.utils.AppUtils;
 import com.imagepicker.FilePickUtils;
@@ -43,8 +42,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
     public Toolbar toolbar;
 
-    private AppToolbarBinding toolbarBinding;
-    private ViewDataBinding viewDataBinding;
+    private ActivityBaseBinding activityBaseBinding;
     private Dialog progressDialog;
     private FilePickUtils filePickUtils;
 
@@ -55,46 +53,35 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getLayout() != null) {
-            viewDataBinding = DataBindingUtil.setContentView(this, getLayout().value());
-            getToolbar();
-            clickableViews(viewDataBinding.getRoot());
+            activityBaseBinding = DataBindingUtil.setContentView(this, R.layout.activity_base);
+            activityBaseBinding.toolbar.tvToolbarLeft.setOnClickListener(this);
         }
         setSupportActionBar(toolbar);
+        clickableViews(new View[]{activityBaseBinding.toolbar.tvToolbarLeft, activityBaseBinding.toolbar.tvToolbarRight,
+                activityBaseBinding.toolbar.tvToolbarTitle});
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
 
-    protected ViewDataBinding getBinding() {
-        return viewDataBinding;
+    protected <T extends ViewDataBinding> T getBinding() {
+        return DataBindingUtil.inflate(getLayoutInflater(), getLayout().value(),
+                activityBaseBinding.layoutContainer, true);
     }
-
-    private void getToolbar() {
-        toolbar = findViewById(R.id.toolbar);
-        toolbarBinding = DataBindingUtil.getBinding(toolbar);
-        toolbarBinding.ivToolbarLeft.setOnClickListener(this);
-        toolbarBinding.tvToolbarLeft.setOnClickListener(this);
-    }
-
 
     public Layout getLayout() {
         return getClass().getAnnotation(Layout.class);
     }
 
-    protected void clickableViews(View views) {
-        if (views instanceof ViewGroup) {
-            ViewGroup viewGroup = ((ViewGroup) views);
-            for (int index = 0; index < viewGroup.getChildCount(); ++index) {
-                View child = viewGroup.getChildAt(index);
-                child.setOnClickListener(this);
-            }
+    protected void clickableViews(View[] views) {
+        for (View view : views) {
+            view.setOnClickListener(this);
         }
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.ivToolbarLeft:
             case R.id.tvToolbarLeft:
-                onBackPressed();
+               // onBackPressed();
                 break;
         }
     }
@@ -140,28 +127,24 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     protected void setToolBarVisibility(int visibility) {
-        assert toolbar != null;
-        toolbar.setVisibility(visibility);
-    }
-
-    protected void setToolBariVLeft(int visibility) {
-        toolbarBinding.ivToolbarLeft.setVisibility(visibility);
+        activityBaseBinding.toolbar.toolbar.setVisibility(visibility);
     }
 
     protected void setTootBartVLeft(String title) {
-        toolbarBinding.tvToolbarLeft.setVisibility(View.VISIBLE);
-        toolbarBinding.tvToolbarLeft.setText(title);
+        activityBaseBinding.toolbar.tvToolbarLeft.setVisibility(View.VISIBLE);
+        activityBaseBinding.toolbar.tvToolbarLeft.setText(title);
     }
 
     protected void setTootBartVRight(String title) {
-        toolbarBinding.tvToolbarRight.setVisibility(View.VISIBLE);
-        toolbarBinding.tvToolbarRight.setText(title);
+        activityBaseBinding.toolbar.tvToolbarRight.setVisibility(View.VISIBLE);
+        activityBaseBinding.toolbar.tvToolbarRight.setText(title);
+        activityBaseBinding.toolbar.tvToolbarRight.setOnClickListener(this);
     }
 
 
     protected void setTootBartVTitle(String title) {
-        toolbarBinding.tvToolbarTitle.setVisibility(View.VISIBLE);
-        toolbarBinding.tvToolbarTitle.setText(title);
+        activityBaseBinding.toolbar.tvToolbarTitle.setVisibility(View.VISIBLE);
+        activityBaseBinding.toolbar.tvToolbarTitle.setText(title);
     }
 
 

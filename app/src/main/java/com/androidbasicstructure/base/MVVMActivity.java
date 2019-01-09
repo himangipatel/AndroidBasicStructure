@@ -12,21 +12,21 @@ import com.androidbasicstructure.utils.AppUtils;
  */
 
 
-public abstract class MVPActivity<P extends BasePresenter<V>, V extends BaseView> extends BaseActivity {
+public abstract class MVVMActivity<P extends BaseViewModel<V>, V extends BaseView> extends BaseActivity {
 
-    private P presenter;
+    private P viewModel;
 
     @Override
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = createPresenter();
-        presenter.attachView(attachView());
+        viewModel = createPresenter();
+        viewModel.attachView(attachView());
     }
 
     @Override
     public void onDestroy() {
-        presenter.detachView();
+        viewModel.detachView();
         super.onDestroy();
     }
 
@@ -38,13 +38,15 @@ public abstract class MVPActivity<P extends BasePresenter<V>, V extends BaseView
     @NonNull
     V attachView();
 
-    public P getPresenter() {
-        return presenter;
+    public P getViewModel() {
+        return viewModel;
     }
 
     public boolean hasInternet() {
         return AppUtils.hasInternet(this);
     }
+
+
 
 
     public Activity getActivity() {

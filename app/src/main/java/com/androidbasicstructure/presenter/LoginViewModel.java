@@ -1,6 +1,11 @@
 package com.androidbasicstructure.presenter;
 
-import com.androidbasicstructure.base.BasePresenter;
+import android.app.Application;
+import android.arch.lifecycle.MutableLiveData;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+
+import com.androidbasicstructure.base.BaseViewModel;
 import com.androidbasicstructure.connection.constant.ApiParamConstant;
 import com.androidbasicstructure.connection.interactor.InterActorCallback;
 import com.androidbasicstructure.models.LoginResponse;
@@ -13,16 +18,46 @@ import java.util.HashMap;
 /**
  * Created by Himangi on 7/6/18
  */
-public class LoginPresenter extends BasePresenter<LoginView<LoginResponse>> {
+public class LoginViewModel extends BaseViewModel<LoginView<LoginResponse>> {
 
-    public void validateLoginData(HashMap<String, String> params) {
+    private MutableLiveData<LoginResponse> loginResponse;
+
+    public LoginViewModel(@NonNull Application application) {
+        super(application);
+    }
+
+//    private MutableLiveData<String> email;
+//    private MutableLiveData<String> password;
+
+    public MutableLiveData<LoginResponse> getLoginResponse(HashMap<String, String> params) {
+        if (loginResponse == null) {
+            loginResponse = new MutableLiveData<>();
+            validateLoginData(params);
+        }
+        return loginResponse;
+    }
+
+    private void validateLoginData(final HashMap<String, String> params) {
         ValidationErrorModel validationErrorModel = null;
         if ((validationErrorModel = (Validator.validateEmail(params.get(ApiParamConstant.EMAIL)))) != null) {
             getView().onValidationError(validationErrorModel);
         } else if ((validationErrorModel = (Validator.validatePassword(params.get(ApiParamConstant.PASSWORD)))) != null) {
             getView().onValidationError(validationErrorModel);
         } else {
-            callLoginApi(params);
+            getView().showProgressDialog(true);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    LoginResponse response = new LoginResponse();
+                    response.setUserEmail("dummyemail@gmail.com");
+                    response.setUserId("0");
+                    response.setUserFirstName("Himangi");
+                    response.setUserLastName("Patel");
+                    loginResponse.setValue(response);
+                }
+            }, 1000);
+
         }
     }
 
@@ -39,7 +74,8 @@ public class LoginPresenter extends BasePresenter<LoginView<LoginResponse>> {
                 @Override
                 public void onResponse(LoginResponse response) {
                     if (response.isStatus()) {
-                        getView().onSuccess(response);
+                        loginResponse.setValue(response);
+                        //getView().onSuccess(response);
                     } else {
                         getView().onFailure(response.getMessage());
                     }

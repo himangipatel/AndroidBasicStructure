@@ -29,7 +29,7 @@ public class AppInteractor {
 
     public AppInteractor() {
     }
-
+    
     private void sendResponse(InterActorCallback callback, Response response) {
         if (!isCancel) {
             callback.onResponse(response);

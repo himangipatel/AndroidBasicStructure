@@ -1,25 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="com.androidbasicstructure.UserModel"/>
+
+        <import type="com.androidbasicstructure.models.User" />
+
         <variable
             name="user"
-            type="com.androidbasicstructure.UserModel"/>
+            type="com.androidbasicstructure.models.User" />
     </data>
-    <TextView
-        android:id="@+id/tvLogin"
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_10sdp"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_margin="@dimen/_5sdp"
         android:background="@drawable/rectable_primary_button"
-        android:fontFamily="@font/delicious_adventures"
-        android:gravity="center"
-        android:padding="@dimen/_10sdp"
-        android:text="@{user.name}"
-        android:textColor="@android:color/white" />
+        android:clickable="false"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:fontFamily="@font/playfairdisplay_regular"
+            android:gravity="start"
+            android:onClick="@{(view)->user.displayUserData(view)}"
+            android:padding="@dimen/_5sdp"
+            android:text="@{user.name}"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tvUserEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:fontFamily="@font/playfairdisplay_regular"
+            android:gravity="start"
+            android:padding="@dimen/_5sdp"
+            android:text="@{user.email}"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/tvUserName" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
 
 </layout>

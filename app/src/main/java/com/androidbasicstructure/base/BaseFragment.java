@@ -1,7 +1,6 @@
 package com.androidbasicstructure.base;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
@@ -24,9 +23,8 @@ import java.util.HashMap;
 /**
  * Created by Himangi on 7/6/18
  */
-public class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment implements View.OnClickListener {
 
-    private Dialog progressDialog;
     private ViewDataBinding viewDataBinding;
 
     @Override
@@ -41,15 +39,26 @@ public class BaseFragment extends Fragment {
         if (getLayout() != null) {
             viewDataBinding = DataBindingUtil.inflate(
                     inflater, getLayout().value(), container, false);
-            ((BaseActivity) getActivity()).clickableViews(viewDataBinding.getRoot());
         }
         getActivity().overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
-        return view;
+        return viewDataBinding.getRoot();
+    }
+
+    protected ViewDataBinding getBinding() {
+        return viewDataBinding;
     }
 
     public Layout getLayout() {
         return getClass().getAnnotation(Layout.class);
     }
+
+
+    protected void clickableViews(View[] views) {
+        for (View view : views) {
+            view.setOnClickListener(this);
+        }
+    }
+
 
     public void updateResources(Context context, String language) {
         if (getActivity() != null) {
@@ -111,5 +120,10 @@ public class BaseFragment extends Fragment {
 
     protected void showAlerterBar(Activity activity, String message) {
         AppUtils.showToast(activity, message);
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }

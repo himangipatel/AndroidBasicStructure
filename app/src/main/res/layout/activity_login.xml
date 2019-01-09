@@ -6,19 +6,17 @@
 
     <data>
 
-        <import type="com.androidbasicstructure.UserModel" />
+        <import type="com.androidbasicstructure.models.UserModel" />
 
         <variable
             name="user"
-            type="com.androidbasicstructure.UserModel" />
+            type="com.androidbasicstructure.models.UserModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".LoginActivity">
-
-        <include layout="@layout/app_toolbar" />
+        tools:context=".activities.LoginActivity">
 
 
         <android.support.constraint.Guideline
@@ -28,29 +26,45 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.5" />
 
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:ems="10"
-            android:fontFamily="@font/delicious_adventures"
-            android:hint="@string/enter_email"
-            android:inputType="textEmailAddress"
-            android:text="@{user.email}"
-            app:layout_constraintBottom_toTopOf="@id/guideline2" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilEmail"
+            style="@style/TextInputLayout"
+            app:layout_constraintBottom_toTopOf="@id/guideline2">
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:onTextChanged="@{(text, start, before, count) -> user.onUsernameTextChanged(text)}"
+                android:fontFamily="@font/playfairdisplay_regular"
+                android:hint="@string/enter_email"
+                android:inputType="textEmailAddress"
+                android:text="@{user.email}"
+                app:layout_constraintBottom_toTopOf="@id/guideline2" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPassword"
+            style="@style/TextInputLayout"
+            app:counterEnabled="true"
+            app:counterMaxLength="10"
+            app:layout_constraintTop_toBottomOf="@id/guideline2"
+            app:passwordToggleEnabled="true">
 
 
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:fontFamily="@font/delicious_adventures"
-            android:hint="@string/enter_password"
-            android:inputType="textPassword"
-            android:text="@{user.password}"
-            app:layout_constraintTop_toBottomOf="@id/guideline2" />
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:fontFamily="@font/playfairdisplay_regular"
+                android:hint="@string/enter_password"
+                android:inputType="textPassword"
+                android:text="@{user.password}" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <TextView
             android:id="@+id/tvLogin"
@@ -60,14 +74,14 @@
             android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:background="@drawable/rectable_primary_button"
-            android:fontFamily="@font/delicious_adventures"
+            android:fontFamily="@font/playfairdisplay_regular"
             android:gravity="center"
             android:padding="@dimen/_10sdp"
             android:text="Login"
             android:textColor="@android:color/white"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/etPassword" />
+            app:layout_constraintTop_toBottomOf="@id/tilPassword" />
 
 
     </android.support.constraint.ConstraintLayout>

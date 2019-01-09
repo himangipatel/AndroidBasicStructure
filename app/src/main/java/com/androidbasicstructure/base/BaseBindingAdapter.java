@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.androidbasicstructure.interfaces.ItemClickListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +91,4 @@ public abstract class BaseBindingAdapter<I> extends RecyclerView.Adapter<BaseBin
         return itemClickListener;
     }
 
-    public interface ItemClickListener<I> {
-        void onClick(I item, int position, View view);
-    }
 }
