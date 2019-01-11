@@ -134,7 +134,7 @@ public class AppUtils {
         return isEmpty(getText(textView));
     }
 
-    public static boolean hasInternet(Activity context) {
+    public static boolean hasInternet(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

@@ -19,3 +19,5 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#https://github.com/AliEsaAssadi/android-mvvm-sample-app/blob/master/app/src/main/java/com/example/ali/androidmvvm/ui/activity/main/MainActivity.java

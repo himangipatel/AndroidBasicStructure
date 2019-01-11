@@ -20,11 +20,10 @@ import com.androidbasicstructure.db.DatabaseHandler;
 import com.androidbasicstructure.models.LoginResponse;
 import com.androidbasicstructure.models.User;
 import com.androidbasicstructure.models.UserModel;
-import com.androidbasicstructure.presenter.LoginViewModel;
+import com.androidbasicstructure.viewmodel.LoginViewModel;
 import com.androidbasicstructure.utils.AppUtils;
 import com.androidbasicstructure.utils.Prefs;
 import com.androidbasicstructure.validator.ValidationErrorModel;
-import com.androidbasicstructure.view.LoginView;
 import com.imagepicker.FilePickUtils;
 
 import java.util.ArrayList;
@@ -32,8 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Layout(R.layout.activity_login)
-public class LoginActivity extends MVVMActivity<LoginViewModel, LoginView<LoginResponse>>
-        implements LoginView<LoginResponse> {
+public class LoginActivity extends MVVMActivity<LoginViewModel> {
 
     private ActivityLoginBinding binding;
 
@@ -46,15 +44,17 @@ public class LoginActivity extends MVVMActivity<LoginViewModel, LoginView<LoginR
             Intent intent = new Intent(LoginActivity.this, UserListingActivity.class);
             startActivity(intent);
         }
+        initViews();
+    }
 
+    private void initViews() {
         setToolBarVisibility(View.GONE);
         clickableViews(new View[]{binding.tvLogin});
         binding.setUser(new UserModel());
         binding.etEmail.addTextChangedListener(textWatcher);
         binding.etPassword.addTextChangedListener(textWatcher);
-
+        getViewModel().validateErrModel.observe(this, validationErrorModelObserver);
     }
-
 
     private FilePickUtils.OnFileChoose onFileChoose = new FilePickUtils.OnFileChoose() {
         @Override
@@ -66,14 +66,8 @@ public class LoginActivity extends MVVMActivity<LoginViewModel, LoginView<LoginR
 
     @NonNull
     @Override
-    public LoginViewModel createPresenter() {
+    public LoginViewModel createViewModel() {
         return ViewModelProviders.of(this).get(LoginViewModel.class);
-    }
-
-    @NonNull
-    @Override
-    public LoginView<LoginResponse> attachView() {
-        return this;
     }
 
 
@@ -86,21 +80,42 @@ public class LoginActivity extends MVVMActivity<LoginViewModel, LoginView<LoginR
                 HashMap<String, String> params = getDefaultParameter();
                 params.put(ApiParamConstant.EMAIL, AppUtils.getText(binding.etEmail));
                 params.put(ApiParamConstant.PASSWORD, AppUtils.getText(binding.etPassword));
-                getViewModel().getLoginResponse(params).observe(this, new Observer<LoginResponse>() {
-                    @Override
-                    public void onChanged(@Nullable LoginResponse loginResponse) {
-                        if (loginResponse != null) {
-                            hideProgressDialog();
-                            binding.etEmail.setText(loginResponse.getUserEmail());
-                            insertData(loginResponse.getUserFirstName().concat(" ").concat(loginResponse.getUserLastName()),
-                                    loginResponse.getUserEmail());
-                            Prefs.with().save("isLogin", true);
-                        }
-                    }
-                });
+                getViewModel().validateLoginData(params).observe(this, loginResponseObserver);
                 break;
         }
     }
+
+    private Observer<LoginResponse> loginResponseObserver = new Observer<LoginResponse>() {
+        @Override
+        public void onChanged(@Nullable LoginResponse loginResponse) {
+            if (loginResponse != null) {
+                hideProgressDialog();
+                binding.etEmail.setText(loginResponse.getUserEmail());
+                insertData(loginResponse.getUserFirstName().concat(" ").concat(loginResponse.getUserLastName()),
+                        loginResponse.getUserEmail());
+                Prefs.with().save("isLogin", true);
+            }
+        }
+    };
+
+
+    private Observer<ValidationErrorModel> validationErrorModelObserver = new Observer<ValidationErrorModel>() {
+        @Override
+        public void onChanged(@Nullable ValidationErrorModel validationErrorModel) {
+            if (validationErrorModel != null){
+                switch (validationErrorModel.getError()) {
+                    case EMAIL:
+                        AppUtils.requestEdittextFocus(LoginActivity.this, binding.etEmail);
+                        binding.tilEmail.setError(getString(validationErrorModel.getMsg()));
+                        break;
+                    case PASSWORD:
+                        AppUtils.requestEdittextFocus(LoginActivity.this, binding.etPassword);
+                        binding.tilPassword.setError(getString(validationErrorModel.getMsg()));
+                        break;
+                }
+            }
+        }
+    };
 
     private void insertData(String name, String email) {
         List<User> userList = new ArrayList<>();
@@ -120,26 +135,6 @@ public class LoginActivity extends MVVMActivity<LoginViewModel, LoginView<LoginR
                 finish();
             }
         }, 3000);
-    }
-
-    @Override
-    public void onFailure(String message) {
-
-    }
-
-    @Override
-    public void onValidationError(ValidationErrorModel validationErrorModel) {
-//        showAlerterBar(getActivity(), getString(validationErrorModel.getMsg()));
-        switch (validationErrorModel.getError()) {
-            case EMAIL:
-                AppUtils.requestEdittextFocus(LoginActivity.this, binding.etEmail);
-                binding.tilEmail.setError(getString(validationErrorModel.getMsg()));
-                break;
-            case PASSWORD:
-                AppUtils.requestEdittextFocus(LoginActivity.this, binding.etPassword);
-                binding.tilPassword.setError(getString(validationErrorModel.getMsg()));
-                break;
-        }
     }
 
     private TextWatcher textWatcher = new TextWatcher() {

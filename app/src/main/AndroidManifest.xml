@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:overrideLibrary="com.imagepicker">
-        <activity android:name=".activities.LoginActivity"
+        <activity
+            android:name=".activities.LoginActivity"
             android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,9 +25,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".base.BaseActivity" />
-        <activity android:name=".activities.UserListingActivity">
-
-        </activity>
+        <activity android:name=".activities.UserListingActivity"></activity>
+        <activity android:name=".activities.CalculatorActivity"></activity>
     </application>
 
 </manifest>

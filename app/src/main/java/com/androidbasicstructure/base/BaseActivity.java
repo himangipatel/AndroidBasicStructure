@@ -42,7 +42,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
     public Toolbar toolbar;
 
-    private ActivityBaseBinding activityBaseBinding;
+    protected ActivityBaseBinding activityBaseBinding;
     private Dialog progressDialog;
     private FilePickUtils filePickUtils;
 

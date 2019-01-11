@@ -2,6 +2,7 @@ package com.androidbasicstructure.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
@@ -12,22 +13,20 @@ import android.view.View;
 import com.androidbasicstructure.R;
 import com.androidbasicstructure.adapter.UserListAdapter;
 import com.androidbasicstructure.annotations.Layout;
-import com.androidbasicstructure.base.BaseView;
 import com.androidbasicstructure.base.MVVMActivity;
 import com.androidbasicstructure.databinding.ActivityUserListingBinding;
 import com.androidbasicstructure.db.DatabaseHandler;
 import com.androidbasicstructure.interfaces.ItemClickListener;
 import com.androidbasicstructure.models.User;
-import com.androidbasicstructure.presenter.UserListingViewModel;
 import com.androidbasicstructure.utils.AppUtils;
+import com.androidbasicstructure.viewmodel.UserListingViewModel;
 
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
 
 @Layout(R.layout.activity_user_listing)
-public class UserListingActivity extends MVVMActivity<UserListingViewModel,
-        BaseView<List<User>>> implements BaseView<List<User>> {
+public class UserListingActivity extends MVVMActivity<UserListingViewModel> {
 
     private ActivityUserListingBinding binding;
     private User editableUser;
@@ -35,10 +34,15 @@ public class UserListingActivity extends MVVMActivity<UserListingViewModel,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initViews();
+    }
+
+    private void initViews() {
         binding = getBinding();
-        setToolBarVisibility(View.GONE);
+        setToolBarVisibility(View.VISIBLE);
         viewModelDemo();
         clickableViews(new View[]{binding.btnAdd});
+        setTootBartVRight("Move to Fragment Demo");
     }
 
     @Override
@@ -56,8 +60,6 @@ public class UserListingActivity extends MVVMActivity<UserListingViewModel,
             @Override
             public void onChanged(@Nullable final List<User> users) {
                 usersListingAdapter.submitList(users);
-                // usersListingAdapter.setItems(users);
-
             }
         });
 
@@ -113,24 +115,17 @@ public class UserListingActivity extends MVVMActivity<UserListingViewModel,
 
 
                 break;
+            case R.id.tvToolbarRight:
+                Intent intent = new Intent(UserListingActivity.this, CalculatorActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
     @NonNull
     @Override
-    public UserListingViewModel createPresenter() {
+    public UserListingViewModel createViewModel() {
         return ViewModelProviders.of(this).get(UserListingViewModel.class);
     }
 
-    @NonNull
-    @Override
-    public BaseView<List<User>> attachView() {
-        return this;
-    }
-
-
-    @Override
-    public void onFailure(String message) {
-
-    }
 }

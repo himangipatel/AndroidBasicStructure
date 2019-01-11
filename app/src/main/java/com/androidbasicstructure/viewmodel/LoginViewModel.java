@@ -1,4 +1,4 @@
-package com.androidbasicstructure.presenter;
+package com.androidbasicstructure.viewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
@@ -11,41 +11,30 @@ import com.androidbasicstructure.connection.interactor.InterActorCallback;
 import com.androidbasicstructure.models.LoginResponse;
 import com.androidbasicstructure.validator.ValidationErrorModel;
 import com.androidbasicstructure.validator.Validator;
-import com.androidbasicstructure.view.LoginView;
 
 import java.util.HashMap;
 
 /**
  * Created by Himangi on 7/6/18
  */
-public class LoginViewModel extends BaseViewModel<LoginView<LoginResponse>> {
+public class LoginViewModel extends BaseViewModel {
 
-    private MutableLiveData<LoginResponse> loginResponse;
+    private MutableLiveData<LoginResponse> loginResponse = new MutableLiveData<>();
+    public MutableLiveData<ValidationErrorModel> validateErrModel = new MutableLiveData<>();
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
     }
 
-//    private MutableLiveData<String> email;
-//    private MutableLiveData<String> password;
-
-    public MutableLiveData<LoginResponse> getLoginResponse(HashMap<String, String> params) {
-        if (loginResponse == null) {
-            loginResponse = new MutableLiveData<>();
-            validateLoginData(params);
-        }
-        return loginResponse;
-    }
-
-    private void validateLoginData(final HashMap<String, String> params) {
+    public MutableLiveData<LoginResponse> validateLoginData(final HashMap<String, String> params) {
         ValidationErrorModel validationErrorModel = null;
         if ((validationErrorModel = (Validator.validateEmail(params.get(ApiParamConstant.EMAIL)))) != null) {
-            getView().onValidationError(validationErrorModel);
+            validateErrModel.setValue(validationErrorModel);
         } else if ((validationErrorModel = (Validator.validatePassword(params.get(ApiParamConstant.PASSWORD)))) != null) {
-            getView().onValidationError(validationErrorModel);
+            validateErrModel.setValue(validationErrorModel);
         } else {
-            getView().showProgressDialog(true);
-
+            setIsLoading(true);
+//            callLoginApi(params);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -54,11 +43,14 @@ public class LoginViewModel extends BaseViewModel<LoginView<LoginResponse>> {
                     response.setUserId("0");
                     response.setUserFirstName("Himangi");
                     response.setUserLastName("Patel");
-                    loginResponse.setValue(response);
+                    loginResponse.postValue(response);
+                    setIsLoading(false);
+                    setSuccessMsg("Login Successfully");
                 }
             }, 1000);
 
         }
+        return loginResponse;
     }
 
     private void callLoginApi(HashMap<String, String> params) {
@@ -68,27 +60,26 @@ public class LoginViewModel extends BaseViewModel<LoginView<LoginResponse>> {
             addSubscription(getAppInteractor().callLoginApi(params, new InterActorCallback<LoginResponse>() {
                 @Override
                 public void onStart() {
-                    getView().showProgressDialog(true);
+                    setIsLoading(true);
                 }
 
                 @Override
                 public void onResponse(LoginResponse response) {
                     if (response.isStatus()) {
                         loginResponse.setValue(response);
-                        //getView().onSuccess(response);
                     } else {
-                        getView().onFailure(response.getMessage());
+                        setErrMsg(response.getMessage());
                     }
                 }
 
                 @Override
                 public void onFinish() {
-                    getView().showProgressDialog(false);
+                    setIsLoading(false);
                 }
 
                 @Override
                 public void onError(String message) {
-                    getView().onFailure(message);
+                    setErrMsg(message);
                 }
             }));
         }
